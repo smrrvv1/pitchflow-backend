@@ -58,3 +58,15 @@ def login(user_data: LoginSchema, db: Session = Depends(get_db)):
         "message": "login successful",
         "user_id": user.id
     }
+
+@router.get("/me/{user_id}")
+def get_me(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(
+        User.id == user_id
+    ).first()
+
+    return {
+        "id": user.id,
+        "email": user.email,
+        "full_name": user.full_name
+    }
