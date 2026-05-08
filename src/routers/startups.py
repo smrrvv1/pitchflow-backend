@@ -55,3 +55,11 @@ def delete_startup(startup_id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {"message": "startup deleted"}
+
+@router.get("/my_startups/{user_id}")
+def get_my_startups(user_id: int, db: Session = Depends(get_db)):
+    startups = db.query(Startup).filter(
+        Startup.owner_id == user_id
+    ).all()
+
+    return startups
