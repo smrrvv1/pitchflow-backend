@@ -1,0 +1,57 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from src.database import get_db
+from src.models import Startup
+from src.schemas import StartupCreate
+
+router = APIRouter(
+    prefix="/startups",
+    tags=["Startups"]
+)
+
+
+@router.post("/")
+def create_startup(startup: StartupCreate, db: Session = Depends(get_db)):
+    new_startup = Startup(
+        title=startup.title,
+        one_liner=startup.one_liner,
+        description=startup.description,
+        tags=startup.tags,
+        stage=startup.stage,
+        target_amount=startup.target_amount,
+        owner_id=startup.owner_id
+    )
+
+    db.add(new_startup)
+
+    db.commit()
+
+    db.refresh(new_startup)
+
+    return new_startup
+
+
+@router.get("/")
+def get_startups(db: Session = Depends(get_db)):
+    startups = db.query(Startup).all()
+
+    return startups
+
+
+@router.get("/{startup_id}")
+def get_startup(startup_id: int, db: Session = Depends(get_db)):
+    startup = db.query(Startup).filter(Startup.id == startup_id).first()
+
+    return startup
+
+
+@router.delete("/{startup_id}")
+def delete_startup(startup_id: int, db: Session = Depends(get_db)):
+    startup = db.query(Startup).filter(Startup.id == startup_id).first()
+
+    db.delete(startup)
+
+    db.commit()
+
+    return {"message": "startup deleted"}
