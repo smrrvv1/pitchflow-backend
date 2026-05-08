@@ -48,13 +48,19 @@ def get_startup(startup_id: int, db: Session = Depends(get_db)):
 
 @router.delete("/{startup_id}")
 def delete_startup(startup_id: int, db: Session = Depends(get_db)):
-    startup = db.query(Startup).filter(Startup.id == startup_id).first()
+    startup = db.query(Startup).filter(
+        Startup.id == startup_id
+    ).first()
+
+    if not startup:
+        return {"message": "startup not found"}
 
     db.delete(startup)
 
     db.commit()
 
     return {"message": "startup deleted"}
+
 
 @router.get("/my_startups/{user_id}")
 def get_my_startups(user_id: int, db: Session = Depends(get_db)):
@@ -74,6 +80,9 @@ def update_startup(
     startup = db.query(Startup).filter(
         Startup.id == startup_id
     ).first()
+
+    if not startup:
+        return {"message": "startup not found"}
 
     startup.title = updated_startup.title
     startup.one_liner = updated_startup.one_liner
