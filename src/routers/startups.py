@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from src.database import get_db
 from src.models import Startup
-from src.schemas import StartupCreate
+from src.schemas import StartupCreate, StartupUpdate
 
 router = APIRouter(
     prefix="/startups",
@@ -63,3 +63,27 @@ def get_my_startups(user_id: int, db: Session = Depends(get_db)):
     ).all()
 
     return startups
+
+
+@router.put("/{startup_id}")
+def update_startup(
+    startup_id: int,
+    updated_startup: StartupUpdate,
+    db: Session = Depends(get_db)
+):
+    startup = db.query(Startup).filter(
+        Startup.id == startup_id
+    ).first()
+
+    startup.title = updated_startup.title
+    startup.one_liner = updated_startup.one_liner
+    startup.description = updated_startup.description
+    startup.tags = updated_startup.tags
+    startup.stage = updated_startup.stage
+    startup.target_amount = updated_startup.target_amount
+
+    db.commit()
+
+    db.refresh(startup)
+
+    return startup

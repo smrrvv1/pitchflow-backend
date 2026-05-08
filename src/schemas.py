@@ -21,3 +21,12 @@ class StartupCreate(BaseModel):
 class ConnectionCreate(BaseModel):
     startup_id: int
     investor_id: int
+
+
+class StartupUpdate(BaseModel):
+    title: str
+    one_liner: str
+    description: str
+    tags: str
+    stage: str
+    target_amount: str
