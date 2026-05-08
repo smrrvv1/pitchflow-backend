@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from src.database import get_db
 from src.models import User
-from src.schemas import UserCreate
+from src.schemas import UserCreate, LoginSchema
 
 router = APIRouter(
     prefix="/users",
@@ -41,3 +41,20 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
 
     return user
+
+@router.post("/login")
+def login(user_data: LoginSchema, db: Session = Depends(get_db)):
+    user = db.query(User).filter(
+        User.email == user_data.email
+    ).first()
+
+    if not user:
+        return {"message": "user not found"}
+
+    if user.password != user_data.password:
+        return {"message": "wrong password"}
+
+    return {
+        "message": "login successful",
+        "user_id": user.id
+    }

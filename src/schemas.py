@@ -30,3 +30,8 @@ class StartupUpdate(BaseModel):
     tags: str
     stage: str
     target_amount: str
+
+
+class LoginSchema(BaseModel):
+    email: str
+    password: str
