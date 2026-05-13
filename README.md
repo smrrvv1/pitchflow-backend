@@ -16,4 +16,4 @@ backend часть проекта pitchflow.
 > uvicorn main:app --reload
 
 ### открыть сваггер
-> 127.0.0.1:8000/docs# pitchflow-backend
+> 127.0.0.1:8000/docs
