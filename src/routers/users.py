@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from src.database import get_db
@@ -49,10 +49,16 @@ def login(user_data: LoginSchema, db: Session = Depends(get_db)):
     ).first()
 
     if not user:
-        return {"message": "user not found"}
+        raise HTTPException(
+            status_code=404,
+            detail="user not found"
+        )
 
     if user.password != user_data.password:
-        return {"message": "wrong password"}
+        raise HTTPException(
+            status_code=401,
+            detail="wrong password"
+        )
 
     return {
         "message": "login successful",
