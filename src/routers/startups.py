@@ -43,6 +43,9 @@ def get_startups(db: Session = Depends(get_db)):
 def get_startup(startup_id: int, db: Session = Depends(get_db)):
     startup = db.query(Startup).filter(Startup.id == startup_id).first()
 
+    if not startup:
+        return {"message": "startup not found"}
+
     return startup
 
 
